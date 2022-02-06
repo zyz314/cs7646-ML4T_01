@@ -69,7 +69,7 @@ if __name__ == "__main__":
     rmse_in_sample = []
     rmse_out_of_sample = []
 
-    for i in range(1, 100):
+    for i in range(1, 70):
         learner = dt.DTLearner(leaf_size=i, verbose=False)  # constructor
         learner.add_evidence(train_x, train_y)  # train it
         # evaluate in sample
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         pred_y = learner.query(test_x)  # get the predictions
         rmse_out_of_sample.append(math.sqrt(((test_y - pred_y) ** 2).sum() / test_y.shape[0]))
 
-    x = range(1, 100)
+    x = range(1, 70)
     plt.figure(1)
     plt.plot(x, rmse_in_sample, label="in-sample", linewidth=2.0)
     plt.plot(x, rmse_out_of_sample, label="out-of-sample", linewidth=2.0)
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     rmse_in_sample = []
     rmse_out_of_sample = []
 
-    for i in range(1, 30):
+    for i in range(1, 70):
         learner = bl.BagLearner(learner = dt.DTLearner, kwargs = {"leaf_size":i}, bags = 20, boost = False, verbose = False)
         learner.add_evidence(train_x, train_y)  # train it
         # evaluate in sample
@@ -106,14 +106,14 @@ if __name__ == "__main__":
         pred_y = learner.query(test_x)  # get the predictions
         rmse_out_of_sample.append(math.sqrt(((test_y - pred_y) ** 2).sum() / test_y.shape[0]))
 
-    x = range(1, 30)
+    x = range(1, 70)
     plt.figure(2)
     plt.plot(x, rmse_in_sample, label="in-sample", linewidth=2.0)
     plt.plot(x, rmse_out_of_sample, label="out-of-sample", linewidth=2.0)
     plt.xlabel("Leaf Size")
     plt.ylabel("Root Mean Squared Errors")
     plt.legend(loc="lower right")
-    plt.title("Figure 2: RMSE of Bagging with Decision Tree Learner with different leaf size (20 bags)")
+    plt.title("Figure 2:\nRMSE of Bagging with Decision Tree Learner with different leaf size \n(20 bags)")
     plt.savefig('images/Exp2_fig2.png')
     plt.close()
   		  	   		  	  			  		 			     			  	 

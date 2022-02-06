@@ -67,7 +67,6 @@ class BagLearner(object):
             choice = np.random.choice(rows, rows,replace=True)
             bag_data_x = data_x[choice]
             bag_data_y = data_y[choice]
-            print(len(bag_data_y))
             self.learners[i].add_evidence(bag_data_x, bag_data_y)
   		  	   		  	  			  		 			     			  	 
     def query(self, points):  		  	   		  	  			  		 			     			  	 
