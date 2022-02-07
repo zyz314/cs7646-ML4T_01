@@ -116,6 +116,85 @@ if __name__ == "__main__":
     plt.title("Figure 2:\nRMSE of Bagging with Decision Tree Learner with different leaf size \n(20 bags)")
     plt.savefig('images/Exp2_fig2.png')
     plt.close()
+
+    # Experiment 3
+    #MAE
+    mae_dt_in_sample = []
+    mae_dt_out_of_sample = []
+    mae_rt_in_sample = []
+    mae_rt_out_of_sample = []
+    for i in range(1, 70):
+        learner = dt.DTLearner(leaf_size=i, verbose=False)  # constructor
+        learner.add_evidence(train_x, train_y)  # train it
+        # evaluate in sample
+        pred_y = learner.query(train_x)  # get the predictions
+        mae_dt_in_sample.append(np.abs(train_y - pred_y).sum() / train_y.shape[0])
+
+        # evaluate out of sample
+        pred_y = learner.query(test_x)  # get the predictions
+        mae_dt_out_of_sample.append(np.abs(test_y - pred_y).sum() / test_y.shape[0])
+
+        learner = rt.RTLearner(leaf_size=i, verbose=False)  # constructor
+        learner.add_evidence(train_x, train_y)  # train it
+        # evaluate in sample
+        pred_y = learner.query(train_x)  # get the predictions
+        mae_rt_in_sample.append(np.abs(train_y - pred_y).sum() / train_y.shape[0])
+
+        # evaluate out of sample
+        pred_y = learner.query(test_x)  # get the predictions
+        mae_rt_out_of_sample.append(np.abs(test_y - pred_y).sum() / test_y.shape[0])
+
+    x = range(1, 70)
+    plt.figure(3)
+    plt.plot(x, mae_dt_in_sample, label="in sample error of DTLearner", linewidth=2.0)
+    plt.plot(x, mae_dt_out_of_sample, label="out of sample error of DT Learner", linewidth=2.0)
+    plt.plot(x, mae_rt_in_sample, label="in sample error of RTLearner", linewidth=2.0)
+    plt.plot(x, mae_rt_out_of_sample, label="out of sample error of RT Learner", linewidth=2.0)
+    plt.xlabel("Leaf Size")
+    plt.ylabel("Mean Absolute Error")
+    plt.legend(loc="lower right")
+    plt.title("Figure 3: MAE of DTLearner vs RTLearner with different leaf size")
+    plt.savefig('images/Exp3_fig3.png')
+    plt.close()
+
+    #MAPE
+    mape_dt_in_sample = []
+    mape_dt_out_of_sample = []
+    mape_rt_in_sample = []
+    mape_rt_out_of_sample = []
+    for i in range(1, 70):
+        learner = dt.DTLearner(leaf_size=i, verbose=False)  # constructor
+        learner.add_evidence(train_x, train_y)  # train it
+        # evaluate in sample
+        pred_y = learner.query(train_x)  # get the predictions
+        mape_dt_in_sample.append(np.mean(np.abs((train_y - pred_y)/train_y))*100)
+
+        # evaluate out of sample
+        pred_y = learner.query(test_x)  # get the predictions
+        mape_dt_out_of_sample.append(np.mean(np.abs((test_y - pred_y)/test_y))*100)
+
+        learner = rt.RTLearner(leaf_size=i, verbose=False)  # constructor
+        learner.add_evidence(train_x, train_y)  # train it
+        # evaluate in sample
+        pred_y = learner.query(train_x)  # get the predictions
+        mape_rt_in_sample.append(np.mean(np.abs((train_y - pred_y)/train_y))*100)
+
+        # evaluate out of sample
+        pred_y = learner.query(test_x)  # get the predictions
+        mape_rt_out_of_sample.append(np.mean(np.abs((test_y - pred_y)/test_y))*100)
+
+    x = range(1, 70)
+    plt.figure(4)
+    plt.plot(x, mape_dt_in_sample, label="in sample error of DTLearner", linewidth=2.0)
+    plt.plot(x, mape_dt_out_of_sample, label="out of sample error of DT Learner", linewidth=2.0)
+    plt.plot(x, mape_rt_in_sample, label="in sample error of RTLearner", linewidth=2.0)
+    plt.plot(x, mape_rt_out_of_sample, label="out of sample error of RT Learner", linewidth=2.0)
+    plt.xlabel("Leaf Size")
+    plt.ylabel("Mean Absolute Percentage Error")
+    plt.legend(loc="lower right")
+    plt.title("Figure 4: MAPE of DTLearner vs RTLearner with different leaf size")
+    plt.savefig('images/Exp3_fig4.png')
+    plt.close()
   		  	   		  	  			  		 			     			  	 
     # evaluate in sample
     learner = lrl.LinRegLearner(verbose=True)

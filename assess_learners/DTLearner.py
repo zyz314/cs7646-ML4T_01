@@ -72,9 +72,10 @@ class DTLearner(object):
         else:
             i = self.find_best_feature_i(data)
             splitVal = np.median(data[:, i], axis=0)
+            # if median is the largest value of the data set, no need to split again
             if (splitVal == np.max(data[:, i], axis=0)):
-                temp = np.argmax(data[:, i])
-                return np.array([[-1, data[temp][-1], -1, -1]])
+                index_of_max_value = np.argmax(data[:, i])
+                return np.array([[-1, data[index_of_max_value][-1], -1, -1]])
 
             lefttree = self.build_tree(data[data[:, i] <= splitVal])
             righttree = self.build_tree(data[data[:, i] > splitVal])
