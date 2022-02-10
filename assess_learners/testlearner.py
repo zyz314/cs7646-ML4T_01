@@ -195,23 +195,4 @@ if __name__ == "__main__":
     plt.title("Figure 4: MAPE of DTLearner vs RTLearner with different leaf size")
     plt.savefig('images/Exp3_fig4.png')
     plt.close()
-  		  	   		  	  			  		 			     			  	 
-    # evaluate in sample
-    learner = lrl.LinRegLearner(verbose=True)
-    learner.add_evidence(train_x, train_y)  # train it
-    pred_y = learner.query(train_x)  # get the predictions
-    rmse = math.sqrt(((train_y - pred_y) ** 2).sum() / train_y.shape[0])  		  	   		  	  			  		 			     			  	 
-    print()  		  	   		  	  			  		 			     			  	 
-    print("In sample results")  		  	   		  	  			  		 			     			  	 
-    print(f"RMSE: {rmse}")  		  	   		  	  			  		 			     			  	 
-    c = np.corrcoef(pred_y, y=train_y)  		  	   		  	  			  		 			     			  	 
-    print(f"corr: {c[0,1]}")  		  	   		  	  			  		 			     			  	 
-  		  	   		  	  			  		 			     			  	 
-    # evaluate out of sample  		  	   		  	  			  		 			     			  	 
-    pred_y = learner.query(test_x)  # get the predictions  		  	   		  	  			  		 			     			  	 
-    rmse = math.sqrt(((test_y - pred_y) ** 2).sum() / test_y.shape[0])  		  	   		  	  			  		 			     			  	 
-    print()  		  	   		  	  			  		 			     			  	 
-    print("Out of sample results")  		  	   		  	  			  		 			     			  	 
-    print(f"RMSE: {rmse}")  		  	   		  	  			  		 			     			  	 
-    c = np.corrcoef(pred_y, y=test_y)  		  	   		  	  			  		 			     			  	 
-    print(f"corr: {c[0,1]}")  		  	   		  	  			  		 			     			  	 
+  
