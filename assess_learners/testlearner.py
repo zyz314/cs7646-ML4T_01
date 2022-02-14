@@ -25,13 +25,10 @@ GT honor code violation.
   		  	   		  	  			  		 			     			  	 
 import math  		  	   		  	  			  		 			     			  	 
 import sys  		  	   		  	  			  		 			     			  	 
-  		  	   		  	  			  		 			     			  	 
 import numpy as np
 import DTLearner as dt
 import RTLearner as rt
 import BagLearner as bl
-
-import LinRegLearner as lrl
 import matplotlib.pyplot as plt
   		  	   		  	  			  		 			     			  	 
 if __name__ == "__main__":  		  	   		  	  			  		 			     			  	 
@@ -195,4 +192,3 @@ if __name__ == "__main__":
     plt.title("Figure 4: MAPE of DTLearner vs RTLearner with different leaf size")
     plt.savefig('images/Exp3_fig4.png')
     plt.close()
-  
