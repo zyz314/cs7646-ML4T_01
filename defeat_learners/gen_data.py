@@ -21,9 +21,9 @@ GT honor code violation.
   		  	   		  	  			  		 			     			  	 
 -----do not edit anything above this line---  		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
-Student Name: Tucker Balch (replace with your name)  		  	   		  	  			  		 			     			  	 
-GT User ID: tb34 (replace with your User ID)  		  	   		  	  			  		 			     			  	 
-GT ID: 900897987 (replace with your GT ID)  		  	   		  	  			  		 			     			  	 
+Student Name: Fung Yi Yuen  		  	   		  	  			  		 			     			  	 
+GT User ID: fyuen3 		  	   		  	  			  		 			     			  	 
+GT ID: 903641501 		  	  			  		 			     			  	 
 """  		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
 import math  		  	   		  	  			  		 			     			  	 
@@ -45,11 +45,9 @@ def best_4_lin_reg(seed=1489683273):
     :rtype: numpy.ndarray  		  	   		  	  			  		 			     			  	 
     """  		  	   		  	  			  		 			     			  	 
     np.random.seed(seed)  		  	   		  	  			  		 			     			  	 
-    x = np.zeros((100, 2))  		  	   		  	  			  		 			     			  	 
-    y = np.random.random(size=(100,)) * 200 - 100  		  	   		  	  			  		 			     			  	 
-    # Here's is an example of creating a Y from randomly generated  		  	   		  	  			  		 			     			  	 
-    # X with multiple columns  		  	   		  	  			  		 			     			  	 
-    # y = x[:,0] + np.sin(x[:,1]) + x[:,2]**2 + x[:,3]**3  		  	   		  	  			  		 			     			  	 
+    x = np.random.random((100, 3))
+    constant_term = np.random.random((100, 1))
+    y = constant_term[:,0] +  x[:,0]  + x[:,1] + x[:,2]
     return x, y  		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
@@ -65,8 +63,18 @@ def best_4_dt(seed=1489683273):
     :rtype: numpy.ndarray  		  	   		  	  			  		 			     			  	 
     """  		  	   		  	  			  		 			     			  	 
     np.random.seed(seed)  		  	   		  	  			  		 			     			  	 
-    x = np.zeros((100, 2))  		  	   		  	  			  		 			     			  	 
-    y = np.random.random(size=(100,)) * 200 - 100  		  	   		  	  			  		 			     			  	 
+    x = np.random.random((100, 3))
+    y = []
+    for i in range(x.shape[0]):
+        f1, f2, f3 = x[i,0], x[i,1], x[i,2]
+        if f1 > 0.7 and f2 > 0.5:
+            if f3 >0.4: y.append(0.5)
+            else: y.append(0.7)
+        else:
+            if f2 > 0.5: y.append(-0.6)
+            else: y.append(-0.7)
+
+    y = np.array(y)
     return x, y  		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
@@ -75,7 +83,7 @@ def author():
     :return: The GT username of the student  		  	   		  	  			  		 			     			  	 
     :rtype: str  		  	   		  	  			  		 			     			  	 
     """  		  	   		  	  			  		 			     			  	 
-    return "tb34"  # Change this to your user ID  		  	   		  	  			  		 			     			  	 
+    return "fyuen3"  # Change this to your user ID
   		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
 if __name__ == "__main__":  		  	   		  	  			  		 			     			  	 
