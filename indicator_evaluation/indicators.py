@@ -43,9 +43,16 @@ def getMomentum(prices, lookback):
 def getMACD(prices):
     ema12 = prices.ewm(span=12, adjust=False).mean()
     ema26 = prices.ewm(span=26, adjust=False).mean()
-    macd = ema26 - ema12
+    macd = ema12 - ema26
     signal = macd.ewm(span=9, adjust=False).mean()
     return macd, signal
+
+def getPPO(prices):
+    ema12 = prices.ewm(span=12, adjust=False).mean()
+    ema26 = prices.ewm(span=26, adjust=False).mean()
+    ppo = ema12 - ema26 / ema26
+    signal = ppo.ewm(span=9, adjust=False).mean()
+    return ppo, signal
 
 def plotGraph(symbol,sd, ed):
     prices_df = get_data([symbol], pd.date_range(sd, ed))
@@ -101,7 +108,7 @@ def plotGraph(symbol,sd, ed):
 
     momentum = getMomentum(normed_price, lookback)
     fig, ax = plt.subplots(figsize=(15, 7))
-    ax.set(xlabel='Time', ylabel="Price", title="Momentum")
+    ax.set(xlabel='Date', ylabel="Price", title="Momentum")
     ax.plot(normed_price, "red", label='Normalized Price')
     ax.plot(momentum, "blue", label="Momentum")
     ax.legend()
@@ -110,10 +117,20 @@ def plotGraph(symbol,sd, ed):
 
     macd, signal = getMACD(normed_price)
     fig, ax = plt.subplots(figsize=(15, 7))
-    ax.set(xlabel='Time', ylabel="Price", title="MACD")
+    ax.set(xlabel='Date', ylabel="Price", title="MACD")
     ax.plot(normed_price, "red", label='Normalized Price')
     ax.plot(macd, "blue", label="MACD")
     ax.plot(signal, "green", label="MACD Signal")
     ax.legend()
     fig.savefig('Indicator4_MACD.png')
+    plt.close()
+
+    ppo, signal = getMACD(normed_price)
+    fig, ax = plt.subplots(figsize=(15, 7))
+    ax.set(xlabel='Date', ylabel="Price", title="Percentage Price Indicator")
+    ax.plot(normed_price, "red", label='Normalized Price')
+    ax.plot(ppo, "blue", label="PPO")
+    ax.plot(signal, "green", label="PPO Signal")
+    ax.legend()
+    fig.savefig('Indicator5_PPO.png')
     plt.close()
