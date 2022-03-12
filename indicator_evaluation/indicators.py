@@ -19,9 +19,10 @@ def getSMA(prices, lookback):
     # calculate simple moving average from prices
     sma = prices.rolling(window=lookback, min_periods=lookback).mean()
     sma_50_days = prices.rolling(window=50, min_periods=50).mean()
+    cross_signal_df = sma / sma_50_days
 
     price_over_sma = prices / sma - 1
-    return sma, sma_50_days, price_over_sma
+    return sma, sma_50_days, cross_signal_df
 
 
 def getBollingerBand(prices, lookback):
@@ -53,7 +54,7 @@ def plotGraph(symbol,sd, ed):
     normed_price = prices_df / prices_df.iloc[0]
 
     lookback = 20
-    sma, sma_50_days, price_over_sma = getSMA(normed_price,lookback)
+    sma, sma_50_days, cross_signal_df = getSMA(normed_price,lookback)
 
     # figure 1.
     fig, ax = plt.subplots(figsize=(15, 7))
@@ -63,7 +64,16 @@ def plotGraph(symbol,sd, ed):
     ax.plot(sma_50_days, "green", label="50-day SMA")
 
     ax.legend(loc="best")
-    fig.savefig('Indicator1_goldencross_SMA.png')
+    fig.savefig('Indicator1_SMA.png')
+    plt.close()
+
+    fig, ax = plt.subplots(figsize=(15, 7))
+    ax.set(xlabel='Date', ylabel="Price", title="Cross Signal")
+    ax.plot(normed_price, "red", label="Normalized Price")
+    ax.plot(cross_signal_df, "green", label="20-day / 50-day SMA")
+
+    ax.legend(loc="best")
+    fig.savefig('Indicator1_cross_SMA.png')
     plt.close()
 
     top_band, bottom_band, bbp = getBollingerBand(normed_price, lookback)
