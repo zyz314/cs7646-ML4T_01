@@ -39,6 +39,10 @@ def getMomentum(prices, lookback):
     momentum = prices / prices.shift(lookback) - 1
     return momentum
 
+def getMACD(prices):
+    ema12 = prices.ewm(span=12, adjust=False).mean()
+    ema26 = prices.ewm(span=26, adjust=False).mean()
+
 def plotGraph(symbol,sd, ed):
     prices_df = get_data([symbol], pd.date_range(sd, ed))
     prices_df.ffill(inplace=True)
@@ -56,7 +60,7 @@ def plotGraph(symbol,sd, ed):
     ax.set(xlabel='Date', ylabel="Price", title="Simple Moving Average")
     ax.plot(normed_price, "red", label="Normalized Price")
     ax.plot(sma, "blue", label="20-day SMA")
-    ax.plot(sma_50_days, "green", label="50-day SMA 50")
+    ax.plot(sma_50_days, "green", label="50-day SMA")
 
     ax.legend(loc="best")
     fig.savefig('Indicator1_goldencross_SMA.png')
