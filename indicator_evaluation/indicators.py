@@ -43,6 +43,9 @@ def getMomentum(prices, lookback):
 def getMACD(prices):
     ema12 = prices.ewm(span=12, adjust=False).mean()
     ema26 = prices.ewm(span=26, adjust=False).mean()
+    macd = ema26 - ema12
+    signal = macd.ewm(span=9, adjust=False).mean()
+    return macd, signal
 
 def plotGraph(symbol,sd, ed):
     prices_df = get_data([symbol], pd.date_range(sd, ed))
@@ -103,4 +106,14 @@ def plotGraph(symbol,sd, ed):
     ax.plot(momentum, "blue", label="Momentum")
     ax.legend()
     fig.savefig('Indicator3_Momentum.png')
+    plt.close()
+
+    macd, signal = getMACD(normed_price)
+    fig, ax = plt.subplots(figsize=(15, 7))
+    ax.set(xlabel='Time', ylabel="Price", title="MACD")
+    ax.plot(normed_price, "red", label='Normalized Price')
+    ax.plot(macd, "blue", label="MACD")
+    ax.plot(signal, "green", label="MACD Signal")
+    ax.legend()
+    fig.savefig('Indicator4_MACD.png')
     plt.close()
