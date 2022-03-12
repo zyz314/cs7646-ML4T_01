@@ -55,8 +55,8 @@ def plotGraph(symbol,sd, ed):
     fig, ax = plt.subplots(figsize=(15, 7))
     ax.set(xlabel='Date', ylabel="Price", title="Simple Moving Average")
     ax.plot(normed_price, "red", label="Normalized Price")
-    ax.plot(sma, "blue", label="SMA")
-    ax.plot(sma_50_days, "green", label="SMA 50 days")
+    ax.plot(sma, "blue", label="20-day SMA")
+    ax.plot(sma_50_days, "green", label="50-day SMA 50")
 
     ax.legend(loc="best")
     fig.savefig('Indicator1_goldencross_SMA.png')
