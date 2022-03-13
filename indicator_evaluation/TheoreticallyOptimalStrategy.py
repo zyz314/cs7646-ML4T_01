@@ -101,7 +101,7 @@ def plot_graph(symbol,sd, ed, df_trades, df_trades_benchmark):
     print(f"Stdev of daily returns of portfolio: {port_stddr}")
 
     print(f"Mean of daily returns of benchmark: {bench_adr}")
-    print(f"Mean of daily returns of benchmark: {port_adr}")
+    print(f"Mean of daily returns of portfolio: {port_adr}")
 
 def compute_portvals(
         orders_df,
