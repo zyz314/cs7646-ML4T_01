@@ -70,7 +70,17 @@ class QLearner(object):
         self.verbose = verbose  		  	   		  	  			  		 			     			  	 
         self.num_actions = num_actions  		  	   		  	  			  		 			     			  	 
         self.s = 0  		  	   		  	  			  		 			     			  	 
-        self.a = 0  		  	   		  	  			  		 			     			  	 
+        self.a = 0
+        self.num_states = num_states
+        self.alpha = alpha
+        self.gamma = gamma
+        self.rar = rar
+        self.radr = radr
+        self.dyna = dyna
+        self.Q = np.zeros((self.num_states, self.num_actions))
+        self.T_c = np.random.random(size=(num_states, num_actions, num_states))
+        self.T_c.fill(0.00001)
+        self.T = self.T_c / np.sum(self.T_c, axis=2, keepdims=True)
   		  	   		  	  			  		 			     			  	 
     def querysetstate(self, s):  		  	   		  	  			  		 			     			  	 
         """  		  	   		  	  			  		 			     			  	 
@@ -85,8 +95,12 @@ class QLearner(object):
         action = rand.randint(0, self.num_actions - 1)  		  	   		  	  			  		 			     			  	 
         if self.verbose:  		  	   		  	  			  		 			     			  	 
             print(f"s = {s}, a = {action}")  		  	   		  	  			  		 			     			  	 
-        return action  		  	   		  	  			  		 			     			  	 
-  		  	   		  	  			  		 			     			  	 
+        return action
+
+    def updateQTable(self, s, a, s_prime, r):
+        return ((1 - self.alpha) * self.Q[s, a] + self.alpha * (
+                    r + self.gamma * self.Q[s_prime, np.argmax(self.Q[s_prime])]))
+
     def query(self, s_prime, r):  		  	   		  	  			  		 			     			  	 
         """  		  	   		  	  			  		 			     			  	 
         Update the Q table and return an action  		  	   		  	  			  		 			     			  	 
@@ -97,9 +111,35 @@ class QLearner(object):
         :type r: float  		  	   		  	  			  		 			     			  	 
         :return: The selected action  		  	   		  	  			  		 			     			  	 
         :rtype: int  		  	   		  	  			  		 			     			  	 
-        """  		  	   		  	  			  		 			     			  	 
-        action = rand.randint(0, self.num_actions - 1)  		  	   		  	  			  		 			     			  	 
-        if self.verbose:  		  	   		  	  			  		 			     			  	 
+        """
+        a = self.a
+        s = self.s
+        self.Q[s, a] = self.updateQTable(s, a, s_prime, r)
+
+        if self.dyna > 0:
+            self.T_c[s, a, s_prime] += 1
+            self.T = self.T_c / np.sum(self.T_c, axis=2, keepdims=True)
+            self.R[s, a] = (1 - self.alpha) * self.R[s, a] + (self.alpha * r)
+            s_primes = self.T[:, :].argmax(axis=2)
+
+            for i in range(self.dyna):
+                dyna_s = rand.randint(0, self.num_states - 1)
+                dyna_a = rand.randint(0, self.num_actions - 1)
+                # infer R and s' from R and T matrices.
+                dyna_r = self.R[dyna_s, dyna_a]
+                dyna_s_prime = s_primes[dyna_s, dyna_a]
+                self.Q[dyna_s, dyna_a]= self.updateQTable(dyna_s, dyna_a, dyna_s_prime, dyna_r)
+
+        if (rand.random() < self.rar):
+            action = rand.randint(0, self.num_actions - 1)
+        else:
+            action = np.argmax(self.Q[s_prime])
+
+        self.a = action
+        self.s = s_prime
+        self.rar = self.rar * self.radr
+
+        if self.verbose:
             print(f"s = {s_prime}, a = {action}, r={r}")  		  	   		  	  			  		 			     			  	 
         return action
 
