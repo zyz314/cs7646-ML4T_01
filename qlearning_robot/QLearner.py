@@ -128,12 +128,11 @@ class QLearner(object):
             s_primes = self.T[:, :].argmax(axis=2)
 
             for i in range(self.dyna):
-                dyna_s = rand.randint(0, self.num_states - 1)
-                dyna_a = rand.randint(0, self.num_actions - 1)
-                # infer R and s' from R and T matrices.
-                dyna_r = self.R[dyna_s, dyna_a]
-                dyna_s_prime = s_primes[dyna_s, dyna_a]
-                self.Q[dyna_s, dyna_a]= self.updateQTable(dyna_s, dyna_a, dyna_s_prime, dyna_r)
+                hallucinate_s = rand.randint(0, self.num_states - 1)
+                hallucinate_a = rand.randint(0, self.num_actions - 1)
+                hallucinate_r = self.R[hallucinate_s, hallucinate_a]
+                hallucinate_s_prime = s_primes[hallucinate_s, hallucinate_a]
+                self.Q[hallucinate_s, hallucinate_a]= self.updateQTable(hallucinate_s, hallucinate_a, hallucinate_s_prime, hallucinate_r)
 
         if (rand.random() < self.rar):
             action = rand.randint(0, self.num_actions - 1)
