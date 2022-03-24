@@ -81,6 +81,8 @@ class QLearner(object):
         self.T_c = np.random.random(size=(num_states, num_actions, num_states))
         self.T_c.fill(0.00001)
         self.T = self.T_c / np.sum(self.T_c, axis=2, keepdims=True)
+        self.R = self.Q.copy()
+        self.R.fill(-1.0)
   		  	   		  	  			  		 			     			  	 
     def querysetstate(self, s):  		  	   		  	  			  		 			     			  	 
         """  		  	   		  	  			  		 			     			  	 
@@ -91,15 +93,18 @@ class QLearner(object):
         :return: The selected action  		  	   		  	  			  		 			     			  	 
         :rtype: int  		  	   		  	  			  		 			     			  	 
         """  		  	   		  	  			  		 			     			  	 
-        self.s = s  		  	   		  	  			  		 			     			  	 
-        action = rand.randint(0, self.num_actions - 1)  		  	   		  	  			  		 			     			  	 
-        if self.verbose:  		  	   		  	  			  		 			     			  	 
+        self.s = s
+        if (rand.random() < self.rar):
+            action = rand.randint(0, self.num_actions - 1)
+        else:
+            action = np.argmax(self.Q[self.s])
+        if self.verbose:
             print(f"s = {s}, a = {action}")  		  	   		  	  			  		 			     			  	 
         return action
 
     def updateQTable(self, s, a, s_prime, r):
         return ((1 - self.alpha) * self.Q[s, a] + self.alpha * (
-                    r + self.gamma * self.Q[s_prime, np.argmax(self.Q[s_prime])]))
+                    r + self.gamma * np.max(self.Q[s_prime, np.argmax(self.Q[s_prime])])))
 
     def query(self, s_prime, r):  		  	   		  	  			  		 			     			  	 
         """  		  	   		  	  			  		 			     			  	 
