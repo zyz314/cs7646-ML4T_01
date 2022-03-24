@@ -78,11 +78,7 @@ class QLearner(object):
         self.radr = radr
         self.dyna = dyna
         self.Q = np.zeros((self.num_states, self.num_actions))
-        self.T_c = np.random.random(size=(num_states, num_actions, num_states))
-        self.T_c.fill(0.00001)
-        self.T = self.T_c / np.sum(self.T_c, axis=2, keepdims=True)
-        self.R = self.Q.copy()
-        self.R.fill(-1.0)
+        self.T = []
   		  	   		  	  			  		 			     			  	 
     def querysetstate(self, s):  		  	   		  	  			  		 			     			  	 
         """  		  	   		  	  			  		 			     			  	 
@@ -104,7 +100,7 @@ class QLearner(object):
 
     def updateQTable(self, s, a, s_prime, r):
         return ((1 - self.alpha) * self.Q[s, a] + self.alpha * (
-                    r + self.gamma * np.max(self.Q[s_prime, np.argmax(self.Q[s_prime])])))
+                    r + self.gamma * self.Q[s_prime, np.argmax(self.Q[s_prime])]))
 
     def query(self, s_prime, r):  		  	   		  	  			  		 			     			  	 
         """  		  	   		  	  			  		 			     			  	 
@@ -122,16 +118,11 @@ class QLearner(object):
         self.Q[s, a] = self.updateQTable(s, a, s_prime, r)
 
         if self.dyna > 0:
-            self.T_c[s, a, s_prime] += 1
-            self.T = self.T_c / np.sum(self.T_c, axis=2, keepdims=True)
-            self.R[s, a] = (1 - self.alpha) * self.R[s, a] + (self.alpha * r)
-            s_primes = self.T[:, :].argmax(axis=2)
-
+            self.T.append((s, a, s_prime, r))
+            rand_indexes = np.random.randint(len(self.T), size=self.dyna)
             for i in range(self.dyna):
-                hallucinate_s = rand.randint(0, self.num_states - 1)
-                hallucinate_a = rand.randint(0, self.num_actions - 1)
-                hallucinate_r = self.R[hallucinate_s, hallucinate_a]
-                hallucinate_s_prime = s_primes[hallucinate_s, hallucinate_a]
+                rand_ind = rand_indexes[i]
+                hallucinate_s, hallucinate_a, hallucinate_s_prime, hallucinate_r = self.T[rand_ind]
                 self.Q[hallucinate_s, hallucinate_a]= self.updateQTable(hallucinate_s, hallucinate_a, hallucinate_s_prime, hallucinate_r)
 
         if (rand.random() < self.rar):
