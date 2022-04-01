@@ -96,7 +96,7 @@ class StrategyLearner(object):
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
         lookback = 14
-        sma, sma_50_days, cross_signal_df = getSMA(prices, lookback)
+        sma, sma_50_days, price_over_sma = getSMA(prices, lookback)
         top_band, bottom_band, bbp = getBollingerBand(prices, lookback)
         momentum = getMomentum(prices, lookback)
 

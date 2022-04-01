@@ -22,7 +22,7 @@ def getSMA(prices, lookback):
     cross_signal_df = sma / sma_50_days
 
     price_over_sma = prices / sma - 1
-    return sma, sma_50_days, cross_signal_df
+    return sma, sma_50_days, price_over_sma
 
 
 def getBollingerBand(prices, lookback):
