@@ -61,7 +61,7 @@ def benchmark(symbol, sd, ed, shares):
     start = df_trades.index.min()
     df_trades.loc[start, 'Trades'] = shares
     return df_trades
-def plot_graph(symbol,sd, ed, df_trades, df_trades_benchmark, in_sample = false):
+def plot_graph(symbol,sd, ed, df_trades, df_trades_benchmark, in_sample = False):
     df_orders = df_trades.copy()
     df_orders['Symbol'] = symbol
     df_orders['Order'] = np.where(df_orders['Trades'] > 0, 'BUY', 'SELL')
@@ -85,6 +85,14 @@ def plot_graph(symbol,sd, ed, df_trades, df_trades_benchmark, in_sample = false)
     plt.ylabel('Normalized Value')
     plt.legend()
     plt.grid(True)
+
+    for index, marks in df_trades.iterrows():
+        if marks['Trades'] > 0:
+            plt.axvline(x=index, color='blue', linestyle='dashed', alpha=.9)
+        elif marks['Trades'] < 0:
+            plt.axvline(x=index, color='black', linestyle='dashed', alpha=.9)
+        else:
+            pass
     if in_sample :
         plt.title('In Sample vs Benchmark')
         plt.savefig('in_sample.png')
