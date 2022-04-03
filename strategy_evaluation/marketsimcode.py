@@ -36,7 +36,7 @@ from util import get_data, plot_data
   		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
 def compute_portvals(  		  	   		  	  			  		 			     			  	 
-    orders_file="./orders/orders.csv",  		  	   		  	  			  		 			     			  	 
+    orders_df,
     start_val=1000000,  		  	   		  	  			  		 			     			  	 
     commission=9.95,  		  	   		  	  			  		 			     			  	 
     impact=0.005,  		  	   		  	  			  		 			     			  	 
@@ -44,8 +44,8 @@ def compute_portvals(
     """  		  	   		  	  			  		 			     			  	 
     Computes the portfolio values.  		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 
-    :param orders_file: Path of the order file or the file object  		  	   		  	  			  		 			     			  	 
-    :type orders_file: str or file object  		  	   		  	  			  		 			     			  	 
+    :param orders_df: order dataframe  		  	   		  	  			  		 			     			  	 
+    :type orders_df: pandas.DataFrame  		  	   		  	  			  		 			     			  	 
     :param start_val: The starting value of the portfolio  		  	   		  	  			  		 			     			  	 
     :type start_val: int  		  	   		  	  			  		 			     			  	 
     :param commission: The fixed amount in dollars charged for each transaction (both entry and exit)  		  	   		  	  			  		 			     			  	 
@@ -58,8 +58,6 @@ def compute_portvals(
     # this is the function the autograder will call to test your code  		  	   		  	  			  		 			     			  	 
     # NOTE: orders_file may be a string, or it may be a file object. Your  		  	   		  	  			  		 			     			  	 
     # code should work correctly with either input  		  	   		  	  			  		 			     			  	 
-    orders_df = pd.read_csv(orders_file, index_col='Date', parse_dates = True, na_values = ['nan'])
-
     start_date = orders_df.index.min()
     end_date = orders_df.index.max()
     stock_list = list(orders_df['Symbol'].unique())
