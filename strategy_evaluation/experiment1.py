@@ -26,7 +26,7 @@ def plot_graph(sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31), in_samp
     symbol = 'JPM'
     df_trades = ms.testPolicy(symbol=symbol, sd=sd, ed=ed,
                                           sv=100000)
-    df_trades_benchmark = sl.benchmark(symbol=symbol, sd=sd, ed=ed,
+    df_trades_benchmark = ms.benchmark(symbol=symbol, sd=sd, ed=ed,
                                                    shares=1000)
     df_orders = df_trades.copy()
     df_orders['Symbol'] = symbol
@@ -57,11 +57,11 @@ def plot_graph(sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31), in_samp
     df_orders_sl['Order'] = np.where(df_orders_sl['Trades'] > 0, 'BUY', 'SELL')
     df_orders_sl['Shares'] = np.abs(df_orders_sl['Trades'])
 
-    port_vals_sl = ms.compute_portvals(df_orders_sl, start_val=100000, commission=9.5, impact=0.005)
+    port_vals_sl = msc.compute_portvals(df_orders_sl, start_val=100000, commission=9.5, impact=0.005)
 
     normed_port_sl = port_vals_sl / port_vals_sl.iloc[0]
 
-    sl_cr, sl_adr, sl_stddr, sl_sr = ms.assess_portfolio(port_vals_sl)
+    sl_cr, sl_adr, sl_stddr, sl_sr = msc.assess_portfolio(port_vals_sl)
     print(f"Cumulative return of the benchmark: {bench_cr}")
     print(f"Cumulative return of the Manual Strategy portfolio: {port_cr}")
     print(f"Cumulative return of the Strategy Learner portfolio: {sl_cr}")

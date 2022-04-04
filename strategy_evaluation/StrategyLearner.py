@@ -91,8 +91,6 @@ class StrategyLearner(object):
         dates = pd.date_range(sd, ed)  		  	   		  	  			  		 			     			  	 
         prices_all = ut.get_data(syms, dates)  # automatically adds SPY  		  	   		  	  			  		 			     			  	 
         prices = prices_all[syms]  # only portfolio symbols
-        if 'SPY' not in symbol:
-            prices.drop('SPY', axis=1, inplace=True)
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
         lookback = 14
@@ -101,6 +99,7 @@ class StrategyLearner(object):
         momentum = getMomentum(prices, lookback)
 
         Xtrain = pd.concat((sma, bbp, momentum), axis=1)
+        Xtrain.fillna(0, inplace=True)
         Xtrain = Xtrain[:-lookback]
 
         Ytrain = np.zeros(Xtrain.shape[0])
@@ -110,7 +109,7 @@ class StrategyLearner(object):
         YSELL = -0.02 - self.impact
 
         for i in range(prices.shape[0] - lookback):
-            ret= (prices[i+lookback]/prices[i])-1.0
+            ret= (prices.ix[i+lookback,symbol]/prices.ix[i,symbol])-1.0
             if ret > YBUY:
                 Ytrain[i] = +1  # LONG
             elif ret < YSELL:
@@ -119,7 +118,7 @@ class StrategyLearner(object):
                 Ytrain[i] = 0  # CASH
 
 
-        self.learner.add_evidence(Xtrain.values, Ytrain.values)
+        self.learner.add_evidence(Xtrain.values, Ytrain)
   		  	   		  	  			  		 			     			  	 
     # this method should use the existing policy and test it against new data  		  	   		  	  			  		 			     			  	 
     def testPolicy(  		  	   		  	  			  		 			     			  	 
@@ -161,15 +160,16 @@ class StrategyLearner(object):
         momentum = getMomentum(prices, lookback)
 
         Xtest = pd.concat((sma, bbp, momentum), axis=1)
-        Xtest = Xtest[:-lookback].values
+        Xtest.fillna(0, inplace=True)
 
-        Ytest = self.learner.query(Xtest);
+        Ytest = self.learner.query(Xtest.values)
         holding_df = pd.DataFrame(index=prices.index, data=np.zeros(prices.shape), columns=prices.columns)
         df_trades = pd.DataFrame(index=prices.index, columns=['Trades'])
 
-        for i in range(holding_df.shape[0]):
+
+        for i in range(holding_df.shape[0]-1):
             index = holding_df.index[i]
-            price_change = Ytest.index[i]
+            price_change =  Ytest[i]
             holding = 0
             if i > 0:
                 holding = holding_df.iloc[i - 1][symbol]
