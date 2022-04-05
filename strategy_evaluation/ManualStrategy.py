@@ -28,7 +28,7 @@ def testPolicy(
     df_trades = pd.DataFrame(index=prices_df.index, columns=['Trades'])
     df_trades['Trades'] = 0
 
-    lookback = 14
+    lookback = 21
     sma, sma_50_days, price_over_sma = getSMA(prices_df, lookback)
     top_band, bottom_band, bbp = getBollingerBand(prices_df, lookback)
     momentum = getMomentum(prices_df, lookback)
@@ -42,17 +42,17 @@ def testPolicy(
                 df_trades.loc[index, 'Trades']= 1000
                 signal = 1
 
-            elif price_over_sma.iloc[i][symbol] > 1.0 or bbp.iloc[i][symbol] > 0.8 or momentum.iloc[i][symbol] > 0.1:
+            elif price_over_sma.iloc[i][symbol] > 1.1 or bbp.iloc[i][symbol] > 0.8 or momentum.iloc[i][symbol] > 0.1:
                 df_trades.loc[index, 'Trades']= -1000
                 signal = -1
 
         elif signal == -1:
-            if price_over_sma.iloc[i][symbol] < 0.6 or bbp.iloc[i][symbol] < 0.2 or momentum.iloc[i][symbol] < -0.1:
+            if price_over_sma.iloc[i][symbol] < 0.65 or bbp.iloc[i][symbol] < 0.1 or momentum.iloc[i][symbol] < -0.2:
                 df_trades.loc[index, 'Trades']= 2000
                 signal = 1
 
         elif signal == 1:
-            if price_over_sma.iloc[i][symbol] > 1.3 or bbp.iloc[i][symbol] > 0.8 or momentum.iloc[i][symbol] > 0.2:
+            if price_over_sma.iloc[i][symbol] > 1.5 or bbp.iloc[i][symbol] > 0.9 or momentum.iloc[i][symbol] > 0.2:
                 df_trades.loc[index, 'Trades']= -2000
                 signal = -1
     df_trades.iloc[-1] = 0

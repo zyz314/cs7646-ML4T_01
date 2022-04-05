@@ -96,7 +96,7 @@ class StrategyLearner(object):
 
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
-        lookback = 14
+        lookback = 21
         sma, sma_50_days, price_over_sma = getSMA(prices, lookback)
 
         top_band, bottom_band, bbp = getBollingerBand(prices, lookback)
@@ -106,16 +106,16 @@ class StrategyLearner(object):
         Xtrain = pd.concat((sma, bbp, momentum), axis=1)
         Xtrain.fillna(0, inplace=True)
 
-        Xtrain = Xtrain[:-lookback]
+        Xtrain = Xtrain[:-10]
 
         Ytrain = np.zeros(Xtrain.shape[0])
 
 
-        YBUY= 0.02 + self.impact
-        YSELL = -0.02 - self.impact
+        YBUY= 0.015 + self.impact
+        YSELL = -0.015 - self.impact
 
-        for i in range(prices.shape[0] - lookback):
-            ret= (prices.ix[i+lookback,symbol]/prices.ix[i,symbol])-1.0
+        for i in range(prices.shape[0] - 10):
+            ret= (prices.ix[i+10,symbol]/prices.ix[i,symbol])-1.0
             if ret > YBUY:
                 Ytrain[i] = +1  # LONG
             elif ret < YSELL:
@@ -160,7 +160,7 @@ class StrategyLearner(object):
             prices.drop('SPY', axis=1, inplace=True)
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
-        lookback = 14
+        lookback = 21
         sma, sma_50_days, cross_signal_df = getSMA(prices, lookback)
         top_band, bottom_band, bbp = getBollingerBand(prices, lookback)
         momentum = getMomentum(prices, lookback)
