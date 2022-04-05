@@ -21,7 +21,7 @@ def getSMA(prices, lookback):
     sma_50_days = prices.rolling(window=50, min_periods=50).mean()
     cross_signal_df = sma / sma_50_days
 
-    price_over_sma = prices / sma - 1
+    price_over_sma = prices / sma
     return sma, sma_50_days, price_over_sma
 
 

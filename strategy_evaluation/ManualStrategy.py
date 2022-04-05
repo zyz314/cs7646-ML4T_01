@@ -26,29 +26,35 @@ def testPolicy(
 
     holding_df = pd.DataFrame(index=prices_df.index, data=np.zeros(prices_df.shape), columns=prices_df.columns)
     df_trades = pd.DataFrame(index=prices_df.index, columns=['Trades'])
+    df_trades['Trades'] = 0
+
     lookback = 14
     sma, sma_50_days, price_over_sma = getSMA(prices_df, lookback)
     top_band, bottom_band, bbp = getBollingerBand(prices_df, lookback)
     momentum = getMomentum(prices_df, lookback)
-    for i in range(holding_df.shape[0]):
-        index = holding_df.index[i]
-        price_change = 0
-        if price_over_sma.iloc[i][symbol] < 0.6 or bbp.iloc[i][symbol] < 0.2 or momentum.iloc[i][symbol] < -0.1:
-            price_change = 1
-        elif price_over_sma.iloc[i][symbol] > 1.0 or bbp.iloc[i][symbol] > 0.8 or momentum.iloc[i][symbol] > -0.1:
-            price_change = -1
 
-        holding = 0
-        if i > 0:
-            holding = holding_df.iloc[i - 1][symbol]
-        position = np.sign(price_change) * 1000
-        if holding + position > 1000 or holding + position < -1000:
-            position = 0
-        elif 1000 >= holding + position * 2 >= -1000:
-            position = position * 2
+    signal = 0
 
-        df_trades.loc[index, 'Trades'] = position
-        holding_df.iloc[i][symbol] = position + holding
+    for i in range(prices_df.shape[0]):
+        index = prices_df.index[i]
+        if signal == 0:
+            if price_over_sma.iloc[i][symbol] < 0.6 or bbp.iloc[i][symbol] < 0.2 or momentum.iloc[i][symbol] < -0.1:
+                df_trades.loc[index, 'Trades']= 1000
+                signal = 1
+
+            elif price_over_sma.iloc[i][symbol] > 1.0 or bbp.iloc[i][symbol] > 0.8 or momentum.iloc[i][symbol] > 0.1:
+                df_trades.loc[index, 'Trades']= -1000
+                signal = -1
+
+        elif signal == -1:
+            if price_over_sma.iloc[i][symbol] < 0.6 or bbp.iloc[i][symbol] < 0.2 or momentum.iloc[i][symbol] < -0.1:
+                df_trades.loc[index, 'Trades']= 2000
+                signal = 1
+
+        elif signal == 1:
+            if price_over_sma.iloc[i][symbol] > 1.3 or bbp.iloc[i][symbol] > 0.8 or momentum.iloc[i][symbol] > 0.2:
+                df_trades.loc[index, 'Trades']= -2000
+                signal = -1
     df_trades.iloc[-1] = 0
     return df_trades
 
@@ -89,12 +95,10 @@ def plot_graph(symbol, sd, ed, df_trades, df_trades_benchmark, in_sample=False):
     plt.grid(True)
 
     for index, marks in df_trades.iterrows():
-        if marks['Trades'] > 0:
+        if df_trades.loc[index, 'Trades'] > 0:
             plt.axvline(x=index, color='blue', linestyle='dashed', alpha=.9)
-        elif marks['Trades'] < 0:
+        elif df_trades.loc[index, 'Trades'] < 0:
             plt.axvline(x=index, color='black', linestyle='dashed', alpha=.9)
-        else:
-            pass
     if in_sample:
         plt.title('In Sample vs Benchmark')
         plt.savefig('in_sample.png')
@@ -143,5 +147,5 @@ def plot_out_of_sample():
     df_trades_benchmark = benchmark(symbol=symbol, sd=sd, ed=ed,
                                     shares=1000)
     plot_graph(symbol=symbol, sd=sd, ed=ed, df_trades=df_trades,
-               df_trades_benchmark=df_trades_benchmark, in_sample=True)
+               df_trades_benchmark=df_trades_benchmark, in_sample=False)
 

@@ -82,9 +82,9 @@ def compute_portvals(
             price = price * (1-impact)
         else:
             price = price * (1+impact)
-
-        trade_df.loc[index, 'Cash'] = trade_df.loc[index, 'Cash'] - commission - price * shares
-        trade_df.loc[index, symbol] = trade_df.loc[index, symbol] + shares
+        if shares != 0:
+            trade_df.loc[index, 'Cash'] = trade_df.loc[index, 'Cash'] - commission - price * shares
+            trade_df.loc[index, symbol] = trade_df.loc[index, symbol] + shares
 
     holding_df = trade_df.cumsum()
     holding_values_df = prices_df * holding_df
