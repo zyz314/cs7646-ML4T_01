@@ -28,6 +28,7 @@ def plot_graph(sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31), in_samp
                                           sv=100000)
     df_trades_benchmark = ms.benchmark(symbol=symbol, sd=sd, ed=ed,
                                                    shares=1000)
+
     df_orders = df_trades.copy()
     df_orders['Symbol'] = symbol
     df_orders['Order'] = np.where(df_orders['Trades'] > 0, 'BUY', 'SELL')
@@ -40,6 +41,7 @@ def plot_graph(sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31), in_samp
     df_orders['Shares'] = np.abs(df_orders['Trades'])
 
     benchmark_port_vals = msc.compute_portvals(df_orders, start_val=100000, commission=9.5, impact=0.005)
+
     normed_port = port_vals / port_vals.iloc[0]
     normed_bench = benchmark_port_vals / benchmark_port_vals.iloc[0]
 
@@ -49,6 +51,7 @@ def plot_graph(sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31), in_samp
     learner = sl.StrategyLearner(impact=0.005)
 
     learner.add_evidence(symbol = symbol, sd=sd, ed=ed, sv=100000)
+
     df_trades_sl = learner.testPolicy(symbol=symbol, sd=sd, ed=ed,
                                           sv=100000)
 

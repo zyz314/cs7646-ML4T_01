@@ -89,17 +89,23 @@ class StrategyLearner(object):
         # example usage of the old backward compatible util function  		  	   		  	  			  		 			     			  	 
         syms = [symbol]  		  	   		  	  			  		 			     			  	 
         dates = pd.date_range(sd, ed)  		  	   		  	  			  		 			     			  	 
-        prices_all = ut.get_data(syms, dates)  # automatically adds SPY  		  	   		  	  			  		 			     			  	 
-        prices = prices_all[syms]  # only portfolio symbols
+        prices = ut.get_data(syms, dates)  # automatically adds SPY
+
+        if 'SPY' not in symbol:
+            prices.drop('SPY', axis=1, inplace=True)
+
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
         lookback = 14
         sma, sma_50_days, price_over_sma = getSMA(prices, lookback)
+
         top_band, bottom_band, bbp = getBollingerBand(prices, lookback)
+
         momentum = getMomentum(prices, lookback)
 
         Xtrain = pd.concat((sma, bbp, momentum), axis=1)
         Xtrain.fillna(0, inplace=True)
+
         Xtrain = Xtrain[:-lookback]
 
         Ytrain = np.zeros(Xtrain.shape[0])

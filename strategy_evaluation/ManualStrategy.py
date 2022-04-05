@@ -100,7 +100,7 @@ def plot_graph(symbol, sd, ed, df_trades, df_trades_benchmark, in_sample=False):
         plt.savefig('in_sample.png')
     else:
         plt.title('Out of Sample vs Benchmark')
-        plt.savefig('in_sample.png')
+        plt.savefig('out_sample.png')
     plt.close()
 
     # Print statistics
@@ -122,30 +122,26 @@ def plot_graph(symbol, sd, ed, df_trades, df_trades_benchmark, in_sample=False):
 
 
 def plot_in_sample():
-    manualStrategy = ManualStrategy()
-
     sd = dt.datetime(2008, 1, 1)
     ed = dt.datetime(2009, 12, 31)
     symbol = 'JPM'
-    df_trades = manualStrategy.testPolicy(symbol="JPM", sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31),
+    df_trades = testPolicy(symbol=symbol, sd=sd, ed=ed,
                                           sv=100000)
-    df_trades_benchmark = manualStrategy.benchmark(symbol="JPM", sd=dt.datetime(2008, 1, 1),
-                                                   ed=dt.datetime(2009, 12, 31),
+    df_trades_benchmark = benchmark(symbol=symbol, sd=sd, ed=ed,
                                                    shares=1000)
-    plot_graph(symbol="JPM", sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31), df_trades=df_trades,
+    plot_graph(symbol=symbol, sd=sd, ed=ed, df_trades=df_trades,
                df_trades_benchmark=df_trades_benchmark, in_sample=True)
 
 
 def plot_out_of_sample():
-    manualStrategy = ManualStrategy()
 
     sd = dt.datetime(2010, 1, 1)
     ed = dt.datetime(2011, 12, 31)
     symbol = 'JPM'
-    df_trades = manualStrategy.testPolicy(symbol="JPM", sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31),
-                                          sv=100000)
-    df_trades_benchmark = manualStrategy.benchmark(symbol="JPM", sd=dt.datetime(2008, 1, 1),
-                                                   ed=dt.datetime(2009, 12, 31),
-                                                   shares=1000)
-    plot_graph(symbol="JPM", sd=dt.datetime(2008, 1, 1), ed=dt.datetime(2009, 12, 31), df_trades=df_trades,
-               df_trades_benchmark=df_trades_benchmark)
+    df_trades = testPolicy(symbol=symbol, sd=sd, ed=ed,
+                           sv=100000)
+    df_trades_benchmark = benchmark(symbol=symbol, sd=sd, ed=ed,
+                                    shares=1000)
+    plot_graph(symbol=symbol, sd=sd, ed=ed, df_trades=df_trades,
+               df_trades_benchmark=df_trades_benchmark, in_sample=True)
+
