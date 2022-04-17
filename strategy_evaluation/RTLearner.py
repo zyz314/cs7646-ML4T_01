@@ -1,5 +1,5 @@
 import numpy as np
-
+from scipy import stats
 
 class RTLearner(object):
     def __init__(self,leaf_size=1, verbose=False):
@@ -10,29 +10,29 @@ class RTLearner(object):
     def author(self):
         return "fyuen3"
 
-    def find_random_feature_i(self, data):
-        random_feature_i = np.random.randint(data.shape[1]-1)
-        return random_feature_i
-
     def build_tree(self, data):
-        if data.shape[0] <= self.leaf_size:
-            leaf = np.array([[-1, np.mean(data[:,-1]), -1, -1]])
-            return leaf
+        tree = np.array([])
+        flag = 0
+        if (data.shape[0] <= self.leaf_size):
+            tree = np.array([['leaf', data[0][-1], '-1', '-1']])
+            return tree
 
-        if np.all(data[:,-1]) == data[0][-1]:
-            return np.array([[-1, data[0][-1], -1, -1]])
+        i= int(np.random.randint(data.shape[1] - 1))
 
-        else:
-            i = self.find_random_feature_i(data)
-            splitVal = np.median(data[:, i], axis=0)
-            if (splitVal == np.max(data[:, i], axis=0)):
-                index_of_max_value = np.argmax(data[:, i])
-                return np.array([[-1, data[index_of_max_value][-1], -1, -1]])
-            lefttree = self.build_tree(data[data[:, i] <= splitVal])
-            righttree = self.build_tree(data[data[:, i] > splitVal])
-            root = np.array([[i, splitVal, 1, lefttree.shape[0]+1]])
-            return np.vstack((root, lefttree, righttree))
+        # if values of Xattribute are the same
+        if (np.all(data[:, i] == data[0][i])):
+            return np.array([['leaf', np.mean(data[:, -1]), '-1', '-1']])
 
+        data = data[np.argsort(data[:, i])]
+        splitVal = np.median(data[0:, i])
+        if max(data[:, i]) == splitVal:
+            return np.array([['leaf', np.mean(data[:, -1]), '-1', '-1']])
+
+        leftTree = self.build_tree(data[data[:, i] <= splitVal])
+        rightTree = self.build_tree(data[data[:, i] > splitVal])
+        root = [i, splitVal, 1, leftTree.shape[0] + 1]
+        tree = np.vstack((root, leftTree, rightTree))
+        return tree
     def add_evidence(self, data_x, data_y):
         new_data = np.ones([data_x.shape[0], data_x.shape[1] + 1])
         new_data[:, 0: data_x.shape[1]] = data_x
@@ -40,18 +40,18 @@ class RTLearner(object):
         self.tree = self.build_tree(new_data)
 
     def query(self, points):
-        Ypred = np.array([])
-        for point in points:
-            node_index = 0
-            while True:
-                factor = int(self.tree[node_index, 0])
-                if factor == -1:
-                    Ypred = np.append(Ypred,self.tree[node_index, 1])
-                    break
+        row = 0
+        predY = np.array([])
+        for data in points:
+            while (self.tree[row][0] != 'leaf'):
+                X_attr = self.tree[row][0]
+                X_attr = int(float(X_attr))
+                if (float(data[X_attr]) <= float(self.tree[row][1])):
+                    row = row + int(float(self.tree[row][2]))
                 else:
-                    split_value = self.tree[node_index, 1]
-                    if point[factor] <= split_value:
-                        node_index = node_index + int(self.tree[node_index, 2])
-                    else:
-                        node_index = node_index + int(self.tree[node_index, -1])
-        return Ypred
+                    row = row + int(float(self.tree[row][3]))
+                row = int(float(row))
+            if (self.tree[row][0] == 'leaf'):
+                predY = np.append(predY, float(self.tree[row][1]))
+                row = 0
+        return predY

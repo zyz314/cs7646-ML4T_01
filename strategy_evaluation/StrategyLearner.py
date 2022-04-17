@@ -96,17 +96,17 @@ class StrategyLearner(object):
 
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
-        lookback = 21
+        lookback = 2
         sma, sma_50_days, price_over_sma = getSMA(prices, lookback)
 
         top_band, bottom_band, bbp = getBollingerBand(prices, lookback)
 
         momentum = getMomentum(prices, lookback)
 
-        Xtrain = pd.concat((sma, bbp, momentum), axis=1)
+        Xtrain = pd.concat((price_over_sma, bbp, momentum), axis=1)
         Xtrain.fillna(0, inplace=True)
 
-        Xtrain = Xtrain[:-10]
+        Xtrain = Xtrain[:-5]
 
         Ytrain = np.zeros(Xtrain.shape[0])
 
@@ -114,8 +114,8 @@ class StrategyLearner(object):
         YBUY= 0.015 + self.impact
         YSELL = -0.015 - self.impact
 
-        for i in range(prices.shape[0] - 10):
-            ret= (prices.ix[i+10,symbol]/prices.ix[i,symbol])-1.0
+        for i in range(prices.shape[0] - 5):
+            ret= (prices.ix[i+5,symbol]/prices.ix[i,symbol])-1.0
             if ret > YBUY:
                 Ytrain[i] = +1  # LONG
             elif ret < YSELL:
@@ -160,35 +160,40 @@ class StrategyLearner(object):
             prices.drop('SPY', axis=1, inplace=True)
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
-        lookback = 21
-        sma, sma_50_days, cross_signal_df = getSMA(prices, lookback)
+        lookback = 2
+        sma, sma_50_days, price_over_sma = getSMA(prices, lookback)
         top_band, bottom_band, bbp = getBollingerBand(prices, lookback)
         momentum = getMomentum(prices, lookback)
 
-        Xtest = pd.concat((sma, bbp, momentum), axis=1)
+        Xtest = pd.concat((price_over_sma, bbp, momentum), axis=1)
         Xtest.fillna(0, inplace=True)
 
         Ytest = self.learner.query(Xtest.values)
         holding_df = pd.DataFrame(index=prices.index, data=np.zeros(prices.shape), columns=prices.columns)
         df_trades = pd.DataFrame(index=prices.index, columns=['Trades'])
+        df_trades['Trades'] = 0
 
+        signal = 0
+        for i in range(prices.shape[0]):
+            index = prices.index[i]
+            if signal == 0:
+                if Ytest[i] > 0:
+                    df_trades.loc[index, 'Trades'] = 1000
+                    signal = 1
 
-        for i in range(holding_df.shape[0]-1):
-            index = holding_df.index[i]
-            price_change =  Ytest[i]
-            holding = 0
-            if i > 0:
-                holding = holding_df.iloc[i - 1][symbol]
-            position = np.sign(price_change) * 1000
-            if holding + position > 1000 or holding + position < -1000:
-                position = 0
-            elif 1000 >= holding + position * 2 >= -1000:
-                position = position * 2
+                elif Ytest[i] < 0:
+                    df_trades.loc[index, 'Trades'] = -1000
+                    signal = -1
 
-            df_trades.loc[index, 'Trades'] = position
-            holding_df.iloc[i][symbol] = position + holding
-        df_trades.iloc[-1] = 0
+            elif signal == -1:
+                if Ytest[i] > 0:
+                    df_trades.loc[index, 'Trades'] = 2000
+                    signal = 1
 
+            elif signal == 1:
+                if Ytest[i] < 0:
+                    df_trades.loc[index, 'Trades'] = -2000
+                    signal = -1
         return df_trades
   		  	   		  	  			  		 			     			  	 
   		  	   		  	  			  		 			     			  	 

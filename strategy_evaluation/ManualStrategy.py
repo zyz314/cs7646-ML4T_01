@@ -55,7 +55,6 @@ def testPolicy(
             if price_over_sma.iloc[i][symbol] > 1.5 or bbp.iloc[i][symbol] > 0.9 or momentum.iloc[i][symbol] > 0.2:
                 df_trades.loc[index, 'Trades']= -2000
                 signal = -1
-    df_trades.iloc[-1] = 0
     return df_trades
 
 

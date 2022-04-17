@@ -1,5 +1,5 @@
 import numpy as np
-
+from scipy import stats
 
 class BagLearner(object):
     def __init__(self, learner, kwargs, bags, boost=False, verbose=False):
@@ -27,4 +27,7 @@ class BagLearner(object):
         Ypred = []
         for learner in self.learners:
             Ypred.append(learner.query(points))
-        return np.mean(Ypred, axis=0)
+
+        Ypred = np.array(Ypred)
+        res = stats.mode(Ypred)
+        return res[0][0]
