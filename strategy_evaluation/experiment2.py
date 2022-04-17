@@ -75,4 +75,22 @@ def experiment2():
     port2_cr, port2_adr, port2_stddr, port2_sr = msc.assess_portfolio(port_vals2)
     port3_cr, port3_adr, port3_stddr, port3_sr = msc.assess_portfolio(port_vals3)
 
+    print(f"Cumulative return of the impact 0: {port_cr}")
+    print(f"Stdev of daily returns of impact 0: {port_stddr}")
+    print(f"Average daily returns of impact 0: {port_adr}")
+    print(f"Sharpe ratio of impact 0: {port_sr}")
 
+    print(f"Cumulative return of the impact 0.002: {port1_cr}")
+    print(f"Stdev of daily returns of impact 0.002: {port1_stddr}")
+    print(f"Average daily returns of impact 0.002: {port1_adr}")
+    print(f"Sharpe ratio of impact 0.002: {port1_sr}")
+
+    print(f"Cumulative return of the impact 0.05: {port2_cr}")
+    print(f"Stdev of daily returns of impact 0.05: {port2_stddr}")
+    print(f"Average daily returns of impact 0.05: {port2_adr}")
+    print(f"Sharpe ratio of impact 0.05: {port2_sr}")
+
+    print(f"Cumulative return of the impact 0.1: {port3_cr}")
+    print(f"Stdev of daily returns of impact 0.1: {port3_stddr}")
+    print(f"Average daily returns of impact 0.1: {port3_adr}")
+    print(f"Sharpe ratio of impact 0.1: {port3_sr}")
