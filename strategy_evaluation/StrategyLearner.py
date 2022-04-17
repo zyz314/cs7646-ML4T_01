@@ -67,7 +67,7 @@ class StrategyLearner(object):
     def add_evidence(  		  	   		  	  			  		 			     			  	 
         self,  		  	   		  	  			  		 			     			  	 
         symbol="IBM",  		  	   		  	  			  		 			     			  	 
-        sd=dt.datetime(2008, 1, 1),  		  	   		  	  			  		 			     			  	 
+        sd=dt.datetime(2008, 1, 1),
         ed=dt.datetime(2009, 1, 1),  		  	   		  	  			  		 			     			  	 
         sv=10000,  		  	   		  	  			  		 			     			  	 
     ):  		  	   		  	  			  		 			     			  	 
