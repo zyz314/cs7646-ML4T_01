@@ -47,12 +47,12 @@ def testPolicy(
                 signal = -1
 
         elif signal == -1:
-            if price_over_sma.iloc[i][symbol] < 0.65 or bbp.iloc[i][symbol] < 0.1 or momentum.iloc[i][symbol] < -0.2:
+            if price_over_sma.iloc[i][symbol] < 0.6 or bbp.iloc[i][symbol] < 0.2 or momentum.iloc[i][symbol] < -0.1:
                 df_trades.loc[index, 'Trades']= 2000
                 signal = 1
 
         elif signal == 1:
-            if price_over_sma.iloc[i][symbol] > 1.5 or bbp.iloc[i][symbol] > 0.9 or momentum.iloc[i][symbol] > 0.2:
+            if price_over_sma.iloc[i][symbol] > 1.1 or bbp.iloc[i][symbol] > 0.8 or momentum.iloc[i][symbol] > 0.1:
                 df_trades.loc[index, 'Trades']= -2000
                 signal = -1
     df_trades.iloc[-1] = 0

@@ -67,7 +67,7 @@ class StrategyLearner(object):
     def add_evidence(  		  	   		  	  			  		 			     			  	 
         self,  		  	   		  	  			  		 			     			  	 
         symbol="IBM",  		  	   		  	  			  		 			     			  	 
-        sd=dt.datetime(2008, 1, 1),  		  	   		  	  			  		 			     			  	 
+        sd=dt.datetime(2008, 1, 1),
         ed=dt.datetime(2009, 1, 1),  		  	   		  	  			  		 			     			  	 
         sv=10000,  		  	   		  	  			  		 			     			  	 
     ):  		  	   		  	  			  		 			     			  	 
@@ -96,7 +96,7 @@ class StrategyLearner(object):
 
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
-        lookback = 21
+        lookback = 2
         sma, sma_50_days, price_over_sma = getSMA(prices, lookback)
 
         top_band, bottom_band, bbp = getBollingerBand(prices, lookback)
@@ -160,8 +160,8 @@ class StrategyLearner(object):
             prices.drop('SPY', axis=1, inplace=True)
         prices.ffill(inplace=True)
         prices.bfill(inplace=True)
-        lookback = 21
-        sma, sma_50_days, cross_signal_df = getSMA(prices, lookback)
+        lookback = 2
+        sma, sma_50_days, price_over_sma = getSMA(prices, lookback)
         top_band, bottom_band, bbp = getBollingerBand(prices, lookback)
         momentum = getMomentum(prices, lookback)
 
